@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Clone</title>
+    <meta name="description" content="A simple Spotify clone with playable songs">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        spotify: {
+                            green: '#1DB954',
+                            dark: '#191414',
+                            light: '#282828',
+                            gray: '#535353',
+                            lightGray: '#b3b3b3'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #191414;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #535353;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b3b3b3;
+        }
+        
+        /* Animation for play button */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-spotify-dark text-white min-h-screen flex flex-col">
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-64 bg-black p-6 hidden md:block flex-shrink-0">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-white mb-6">
+                    <i class="fab fa-spotify mr-2"></i> Spotify
+                </h1>
+                <ul class="space-y-4">
+                    <li><a href="#" class="text-white hover:text-spotify-green flex items-center"><i class="fas fa-home mr-4"></i> Home</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white flex items-center"><i class="fas fa-search mr-4"></i> Search</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white flex items-center"><i class="fas fa-book mr-4"></i> Your Library</a></li>
+                </ul>
+            </div>
+            <div class="mt-8">
+                <h3 class="text-spotify-lightGray uppercase text-xs font-bold mb-4">Playlists</h3>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white flex items-center"><i class="fas fa-plus-circle mr-3"></i> Create Playlist</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white flex items-center"><i class="fas fa-heart mr-3"></i> Liked Songs</a></li>
+                </ul>
+            </div>
+            <div class="mt-6 border-t border-spotify-gray pt-6">
+                <ul class="space-y-2 max-h-64 overflow-y-auto">
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white text-sm">Workout Mix</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white text-sm">Chill Vibes</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white text-sm">Focus Flow</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white text-sm">Party Hits</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white text-sm">Sleep Sounds</a></li>
+                    <li><a href="#" class="text-spotify-lightGray hover:text-white text-sm">Road Trip</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto bg-gradient-to-b from-spotify-light to-spotify-dark">
+            <header class="p-6 sticky top-0 bg-gradient-to-b from-black to-spotify-light bg-opacity-60 z-10">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-black rounded-full w-8 h-8 flex items-center justify-center hover:bg-spotify-gray md:hidden">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h2 class="text-2xl font-bold">Good afternoon</h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-black bg-opacity-40 text-white rounded-full px-4 py-1 hover:bg-opacity-60 text-sm font-medium">
+                            Upgrade
+                        </button>
+                        <div class="w-8 h-8 bg-spotify-gray rounded-full flex items-center justify-center hover:bg-spotify-green transition-colors cursor-pointer">
+                            <i class="fas fa-user text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <!-- Recently Played -->
+                <section class="mb-10">
+                    <h3 class="text-xl font-bold mb-4">Recently played</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                        <div class="bg-spotify-light bg-opacity-60 p-4 rounded hover:bg-spotify-gray cursor-pointer transition-colors group">
+                            <div class="relative mb-3">
+                                <img src="https://picsum.photos/200?random=1" alt="Album cover" class="w-full rounded shadow-lg group-hover:opacity-80 transition-opacity">
+                                <button class="absolute bottom-2 right-2 bg-spotify-green rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-105 transform">
+                                    <i class="fas fa-play text-black"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-bold truncate">Daily Mix 1</h4>
+                            <p class="text-spotify-lightGray text-sm truncate">Your daily mix of favorites</p>
+                        </div>
+                        <div class="bg-spotify-light bg-opacity-60 p-4 rounded hover:bg-spotify-gray cursor-pointer transition-colors group">
+                            <div class="relative mb-3">
+                                <img src="https://picsum.photos/200?random=2" alt="Album cover" class="w-full rounded shadow-lg group-hover:opacity-80 transition-opacity">
+                                <button class="absolute bottom-2 right-2 bg-spotify-green rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-105 transform">
+                                    <i class="fas fa-play text-black"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-bold truncate">Discover Weekly</h4>
+                            <p class="text-spotify-lightGray text-sm truncate">Your weekly mixtape</p>
+                        </div>
+                        <div class="bg-spotify-light bg-opacity-60 p-4 rounded hover:bg-spotify-gray cursor-pointer transition-colors group">
+                            <div class="relative mb-3">
+                                <img src="https://picsum.photos/200?random=3" alt="Album cover" class="w-full rounded shadow-lg group-hover:opacity-80 transition-opacity">
+                                <button class="absolute bottom-2 right-2 bg-spotify-green rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-105 transform">
+                                    <i class="fas fa-play text-black"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-bold truncate">Chill Vibes</h4>
+                            <p class="text-spotify-lightGray text-sm truncate">Relaxing tunes for your day</p>
+                        </div>
+                        <div class="bg-spotify-light bg-opacity-60 p-4 rounded hover:bg-spotify-gray cursor-pointer transition-colors group">
+                            <div class="relative mb-3">
+                                <img src="https://picsum.photos/200?random=4" alt="Album cover" class="w-full rounded shadow-lg group-hover:opacity-80 transition-opacity">
+                                <button class="absolute bottom-2 right-2 bg-spotify-green rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-105 transform">
+                                    <i class="fas fa-play text-black"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-bold truncate">Workout Mix</h4>
+                            <p class="text-spotify-lightGray text-sm truncate">Pump up your exercise</p>
+                        </div>
+                        <div class="bg-spotify-light bg-opacity-60 p-4 rounded hover:bg-spotify-gray cursor-pointer transition-colors group">
+                            <div class="relative mb-3">
+                                <img src="https://picsum.photos/200?random=5" alt="Album cover" class="w-full rounded shadow-lg group-hover:opacity-80 transition-opacity">
+                                <button class="absolute bottom-2 right-2 bg-spotify-green rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-105 transform">
+                                    <i class="fas fa-play text-black"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-bold truncate">Focus Flow</h4>
+                            <p class="text-spotify-lightGray text-sm truncate">Concentration booster</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Playlist -->
+                <section>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Your top mixes</h3>
+                        <a href="#" class="text-spotify-lightGray text-sm hover:underline hover:text-white">Show all</a>
+                    </div>
+                    
+                    <div class="bg-spotify-light rounded-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-spotify-gray text-spotify-lightGray text-left text-sm">
+                                    <th class="p-4 w-12 text-center">#</th>
+                                    <th class="p-4">Title</th>
+                                    <th class="p-4">Album</th>
+                                    <th class="p-4 w-12"><i class="far fa-clock"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="playlist">
+                                <!-- Songs will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Player -->
+    <div class="h-20 bg-spotify-light border-t border-spotify-gray flex items-center px-4">
+        <div class="w-1/4 flex items-center">
+            <img id="now-playing-image" src="https://picsum.photos/60?random=3" alt="Now playing" class="h-14 w-14 mr-3 rounded">
+            <div class="min-w-0">
+                <h4 id="now-playing-title" class="font-medium text-sm truncate">No song selected</h4>
+                <p id="now-playing-artist" class="text-spotify-lightGray text-xs truncate">Select a song to play</p>
+            </div>
+            <button class="ml-4 text-spotify-lightGray hover:text-white" id="like-btn">
+                <i class="far fa-heart"></i>
+            </button>
+        </div>
+        <div class="w-2/4 flex flex-col items-center">
+            <div class="flex items-center space-x-4 mb-2">
+                <button class="text-spotify-lightGray hover:text-white" id="shuffle-btn">
+                    <i class="fas fa-random"></i>
+                </button>
+                <button class="text-spotify-lightGray hover:text-white" id="prev-btn">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-105 transform transition-transform" id="play-btn">
+                    <i class="fas fa-play text-black text-sm" id="play-icon"></i>
+                </button>
+                <button class="text-spotify-lightGray hover:text-white" id="next-btn">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+                <button class="text-spotify-lightGray hover:text-white" id="repeat-btn">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            <div class="w-full flex items-center">
+                <span id="current-time" class="text-xs text-spotify-lightGray mr-2">0:00</span>
+                <div class="flex-1 h-1 bg-spotify-gray rounded-full cursor-pointer" id="progress-container">
+                    <div id="progress-bar" class="h-1 bg-spotify-lightGray rounded-full w-0"></div>
+                </div>
+                <span id="duration" class="text-xs text-spotify-lightGray ml-2">0:00</span>
+            </div>
+        </div>
+        <div class="w-1/4 flex justify-end items-center">
+            <button class="text-spotify-lightGray hover:text-white mr-3 hidden md:block">
+                <i class="fas fa-list"></i>
+            </button>
+            <button class="text-spotify-lightGray hover:text-white mr-3 hidden md:block">
+                <i class="fas fa-laptop"></i>
+            </button>
+            <div class="flex items-center">
+                <i class="fas fa-volume-up text-spotify-lightGray mr-2"></i>
+                <div class="w-20 h-1 bg-spotify-gray rounded-full cursor-pointer" id="volume-container">
+                    <div class="h-1 bg-spotify-lightGray rounded-full w-3/4" id="volume-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio element (hidden) -->
+    <audio id="audio-player"></audio>
+
+    <script>
+        // Customizable song list with audio URLs (using sample audio files)
+        const songs = [
+            { 
+                id: 1, 
+                title: "Kadal Meedu Nadakalam", 
+                artist: "Giftson Durai", 
+                album: "Thunga Iravugal", 
+                duration: "3:20",
+                audio: "./assets/Songs/Kadal_Meedu_Nadakalam.mp4",
+                image: "./assets/Song_pics/Thunga_Iravugal.jpg",
+                liked: true
+            },
+            { 
+                id: 2, 
+                title: "Feel it", 
+                artist: "DV4D", 
+                album: "Invincible", 
+                duration: "3:35",
+                audio: "./assets/Songs/Feel_it.mp3",
+                image: "./assets/Song_pics/Feel_it.jpg",
+                liked: true
+            },
+            { 
+                id: 3, 
+                title: "Pirai Thedum Iravilae", 
+                artist: "GV Prakash", 
+                album: "Mayakam Enna", 
+                duration: "5:09",
+                audio: "./assets/Songs.Pirai_Thedum_Iravilae.mp3",
+                image: "./assets/Song_pics/Pirai_Thedum.jpg",
+                liked: false
+            },
+            { 
+                id: 4, 
+                title: "Maya Nadhi", 
+                artist: "Santosh Narayanan", 
+                album: "Kabali", 
+                duration: "3:04",
+                audio: "./assets/Songs/Maya_Nadhi.mp3",
+                image: "./assets/Song_pics/Maya_Nadhi.jpg",
+                liked: false
+            },
+            { 
+                id: 5, 
+                title: "Kalyana Malai", 
+                artist: "Ilaiyaraaja", 
+                album: "Pudu Pudu Arthangal", 
+                duration: "5:11",
+                audio: "./assets/Songs/Kalyana_Malai.mp3",
+                image: "./assets/Song_pics/Kalyana_Malai.jpg",
+                liked: true
+            },
+            { 
+                id: 6, 
+                title: "Indru Netru Naalai", 
+                artist: "Hip Hop Tamizha", 
+                album: "Indru Netru Naalai", 
+                duration: "3:05",
+                audio: "./assets/Songs/Indru_Netru_Naalai.mp3",
+                image: "./assets/Song_pics/Indru_Netru_Nalai.jpg",
+                liked: false
+            },
+            { 
+                id: 7, 
+                title: "Ennamo Yeadho", 
+                artist: "Harris Jayaraj", 
+                album: "Ko", 
+                duration: "5:16",
+                audio: "./assets/Songs/Ennamo_Yeadho.mp3",
+                image: "./assets/Song_pics/Ennamo_Edho.jpg",
+                liked: false
+            },
+            { 
+                id: 8, 
+                title: "Manjal Veyil", 
+                artist: "Harris Jayaraj", 
+                album: "Vettaiyadu Vilaiyadu", 
+                duration: "5:53",
+                audio: "./assets/Songs/Manjal_Veyil.mp3",
+                image: "./assets/Song_pics/Manjal_Veyil.jpg",
+                liked: true
+            },
+            { 
+                id: 9, 
+                title: "Star Boy", 
+                artist: "Weeknd", 
+                album: "Star Boy", 
+                duration: "4:33",
+                audio: "./assets/Songs/Star_Boy.mp3",
+                image: "./assets/Song_pics/Star_Boy.jpg",
+                liked: false
+            },
+            { 
+                id: 10, 
+                title: "Pondatii", 
+                artist: "Thaman S", 
+                album: "Osthe", 
+                duration: "4:15",
+                audio: "./assets/Songs/Pondatii.mp3",
+                image: "./assets/Song_pics/Pondatii.jpg",
+                liked: false
+            }
+        ];
+
+        // Audio player elements
+        const audioPlayer = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+        const likeBtn = document.getElementById('like-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const nowPlayingTitle = document.getElementById('now-playing-title');
+        const nowPlayingArtist = document.getElementById('now-playing-artist');
+        const nowPlayingImage = document.getElementById('now-playing-image');
+        const volumeBar = document.getElementById('volume-bar');
+        const volumeContainer = document.getElementById('volume-container');
+
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let isShuffled = false;
+        let isRepeated = false;
+        let originalPlaylist = [...songs];
+        let shuffledPlaylist = [];
+
+        // Format time in seconds to MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Update progress bar and time
+        function updateProgress() {
+            const { duration, currentTime } = audioPlayer;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            currentTimeEl.textContent = formatTime(currentTime);
+        }
+
+        // Set progress bar when clicked
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audioPlayer.duration;
+            audioPlayer.currentTime = (clickX / width) * duration;
+        }
+
+        // Set volume when clicked
+        function setVolume(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const volume = clickX / width;
+            audioPlayer.volume = volume;
+            volumeBar.style.width = `${volume * 100}%`;
+        }
+
+        // Play song
+        function playSong() {
+            audioPlayer.play();
+            playIcon.classList.replace('fa-play', 'fa-pause');
+            playBtn.classList.add('pulse-animation');
+            isPlaying = true;
+        }
+
+        // Pause song
+        function pauseSong() {
+            audioPlayer.pause();
+            playIcon.classList.replace('fa-pause', 'fa-play');
+            playBtn.classList.remove('pulse-animation');
+            isPlaying = false;
+        }
+
+        // Load and play song
+        function loadSong(songIndex) {
+            const song = isShuffled ? shuffledPlaylist[songIndex] : songs[songIndex];
+            currentSongIndex = songIndex;
+            
+            // Update player UI
+            nowPlayingTitle.textContent = song.title;
+            nowPlayingArtist.textContent = song.artist;
+            nowPlayingImage.src = song.image;
+            durationEl.textContent = song.duration;
+            
+            // Update like button
+            updateLikeButton(song.liked);
+            
+            // Load audio
+            audioPlayer.src = song.audio;
+            audioPlayer.load();
+            
+            // Highlight current song in playlist
+            const rows = document.querySelectorAll('#playlist tr');
+            rows.forEach(row => row.classList.remove('bg-spotify-gray', 'text-spotify-green'));
+            
+            // Find the correct row index (accounting for shuffle)
+            let displayIndex;
+            if (isShuffled) {
+                const songId = shuffledPlaylist[songIndex].id;
+                displayIndex = songs.findIndex(s => s.id === songId);
+            } else {
+                displayIndex = songIndex;
+            }
+            
+            if (rows[displayIndex]) {
+                rows[displayIndex].classList.add('bg-spotify-gray');
+                const titleCell = rows[displayIndex].querySelector('td:nth-child(2)');
+                if (titleCell) {
+                    titleCell.classList.add('text-spotify-green');
+                }
+            }
+            
+            playSong();
+        }
+
+        // Previous song
+        function prevSong() {
+            currentSongIndex--;
+            if (currentSongIndex < 0) {
+                currentSongIndex = (isShuffled ? shuffledPlaylist : songs).length - 1;
+            }
+            loadSong(currentSongIndex);
+        }
+
+        // Next song
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex > (isShuffled ? shuffledPlaylist : songs).length - 1) {
+                currentSongIndex = 0;
+            }
+            loadSong(currentSongIndex);
+        }
+
+        // Toggle shuffle
+        function toggleShuffle() {
+            isShuffled = !isShuffled;
+            shuffleBtn.classList.toggle('text-spotify-green', isShuffled);
+            
+            if (isShuffled) {
+                // Create a shuffled playlist (excluding current song)
+                shuffledPlaylist = [...songs];
+                const currentSong = shuffledPlaylist.splice(currentSongIndex, 1)[0];
+                
+                // Shuffle the remaining songs
+                for (let i = shuffledPlaylist.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledPlaylist[i], shuffledPlaylist[j]] = [shuffledPlaylist[j], shuffledPlaylist[i]];
+                }
+                
+                // Put current song back at the beginning
+                shuffledPlaylist.unshift(currentSong);
+                currentSongIndex = 0;
+            } else {
+                // Find the current song's position in the original playlist
+                const currentSongId = shuffledPlaylist[currentSongIndex].id;
+                currentSongIndex = songs.findIndex(song => song.id === currentSongId);
+            }
+            
+            renderPlaylist();
+        }
+
+        // Toggle repeat
+        function toggleRepeat() {
+            isRepeated = !isRepeated;
+            repeatBtn.classList.toggle('text-spotify-green', isRepeated);
+            audioPlayer.loop = isRepeated;
+        }
+
+        // Toggle like
+        function toggleLike() {
+            const currentSongId = isShuffled ? shuffledPlaylist[currentSongIndex].id : songs[currentSongIndex].id;
+            const songIndex = songs.findIndex(song => song.id === currentSongId);
+            
+            if (songIndex !== -1) {
+                songs[songIndex].liked = !songs[songIndex].liked;
+                updateLikeButton(songs[songIndex].liked);
+                
+                // Update the like button in the playlist if visible
+                const rows = document.querySelectorAll('#playlist tr');
+                const likeIcon = rows[songIndex]?.querySelector('.like-btn i');
+                if (likeIcon) {
+                    likeIcon.className = songs[songIndex].liked ? 'fas fa-heart text-spotify-green' : 'far fa-heart';
+                }
+            }
+        }
+
+        // Update like button appearance
+        function updateLikeButton(liked) {
+            likeBtn.innerHTML = liked ? '<i class="fas fa-heart text-spotify-green"></i>' : '<i class="far fa-heart"></i>';
+        }
+
+        // Function to render the playlist
+        function renderPlaylist() {
+            const playlistElement = document.getElementById('playlist');
+            playlistElement.innerHTML = '';
+            
+            const playlistToRender = isShuffled ? shuffledPlaylist : songs;
+            
+            playlistToRender.forEach((song, index) => {
+                const originalIndex = songs.findIndex(s => s.id === song.id);
+                const row = document.createElement('tr');
+                row.className = 'group hover:bg-spotify-gray border-b border-spotify-gray cursor-pointer';
+                row.innerHTML = `
+                    <td class="p-4 text-spotify-lightGray text-center text-sm">${index + 1}</td>
+                    <td class="p-4 font-medium flex items-center">
+                        <img src="${song.image}" alt="Album cover" class="w-10 h-10 mr-3 rounded">
+                        <div class="min-w-0">
+                            <div class="text-sm truncate ${index === currentSongIndex && isShuffled ? 'text-spotify-green' : ''}">${song.title}</div>
+                            <div class="text-spotify-lightGray text-xs truncate">${song.artist}</div>
+                        </div>
+                    </td>
+                    <td class="p-4 text-spotify-lightGray text-sm truncate hidden md:table-cell">${song.album}</td>
+                    <td class="p-4 text-spotify-lightGray text-sm flex items-center justify-between">
+                        <button class="like-btn opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity">
+                            <i class="${song.liked ? 'fas fa-heart text-spotify-green' : 'far fa-heart'}"></i>
+                        </button>
+                        <span>${song.duration}</span>
+                    </td>
+                `;
+                
+                // Add click event to play song
+                row.addEventListener('click', () => loadSong(index));
+                
+                // Add click event to like button
+                const likeBtn = row.querySelector('.like-btn');
+                likeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const songIndex = songs.findIndex(s => s.id === song.id);
+                    if (songIndex !== -1) {
+                        songs[songIndex].liked = !songs[songIndex].liked;
+                        likeBtn.innerHTML = `<i class="${songs[songIndex].liked ? 'fas fa-heart text-spotify-green' : 'far fa-heart'}"></i>`;
+                        
+                        // Update main like button if this is the current song
+                        if (currentSongIndex === index && isShuffled) {
+                            updateLikeButton(songs[songIndex].liked);
+                        } else if (currentSongIndex === originalIndex && !isShuffled) {
+                            updateLikeButton(songs[songIndex].liked);
+                        }
+                    }
+                });
+                
+                playlistElement.appendChild(row);
+            });
+        }
+
+        // Event listeners
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                pauseSong();
+            } else {
+                playSong();
+            }
+        });
+
+        prevBtn.addEventListener('click', prevSong);
+        nextBtn.addEventListener('click', nextSong);
+        shuffleBtn.addEventListener('click', toggleShuffle);
+        repeatBtn.addEventListener('click', toggleRepeat);
+        likeBtn.addEventListener('click', toggleLike);
+
+        // Progress bar click
+        progressContainer.addEventListener('click', setProgress);
+
+        // Volume bar click
+        volumeContainer.addEventListener('click', setVolume);
+
+        // Set initial volume
+        audioPlayer.volume = 0.75;
+
+        // Time/song updates
+        audioPlayer.addEventListener('timeupdate', updateProgress);
+        audioPlayer.addEventListener('ended', () => {
+            if (!isRepeated) {
+                nextSong();
+            }
+        });
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(audioPlayer.duration);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isPlaying) {
+                    pauseSong();
+                } else {
+                    playSong();
+                }
+            } else if (e.code === 'ArrowRight') {
+                nextSong();
+            } else if (e.code === 'ArrowLeft') {
+                prevSong();
+            }
+        });
+
+        // Initialize the playlist when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            // Load first song automatically
+            loadSong(0);
+        });
+    </script>
+</body>
+</html>
